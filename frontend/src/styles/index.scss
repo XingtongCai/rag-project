@@ -1,0 +1,177 @@
+// 全局样式文件
+@import './variables.scss';
+@import './mixins.scss';
+
+// 重置样式
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  font-size: 14px;
+  color: $text-color-primary;
+  background-color: $bg-color;
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+  
+  &:hover {
+    background: #a8a8a8;
+  }
+}
+
+// 通用类
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.full-height {
+  height: 100vh;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// 间距类
+@for $i from 1 through 10 {
+  .mt-#{$i * 5} {
+    margin-top: #{$i * 5}px;
+  }
+  
+  .mb-#{$i * 5} {
+    margin-bottom: #{$i * 5}px;
+  }
+  
+  .ml-#{$i * 5} {
+    margin-left: #{$i * 5}px;
+  }
+  
+  .mr-#{$i * 5} {
+    margin-right: #{$i * 5}px;
+  }
+  
+  .pt-#{$i * 5} {
+    padding-top: #{$i * 5}px;
+  }
+  
+  .pb-#{$i * 5} {
+    padding-bottom: #{$i * 5}px;
+  }
+  
+  .pl-#{$i * 5} {
+    padding-left: #{$i * 5}px;
+  }
+  
+  .pr-#{$i * 5} {
+    padding-right: #{$i * 5}px;
+  }
+}
+
+// 卡片样式
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+// 页面容器
+.page-container {
+  padding: 20px;
+  min-height: calc(100vh - 60px);
+}
+
+// 表单样式增强
+.form-container {
+  .el-form-item {
+    margin-bottom: 22px;
+  }
+  
+  .el-form-item__label {
+    font-weight: 500;
+  }
+}
+
+// 表格样式增强
+.table-container {
+  .el-table {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .el-table__header {
+    th {
+      background-color: #fafafa;
+      color: $text-color-primary;
+      font-weight: 500;
+    }
+  }
+}
+
+// 按钮组样式
+.button-group {
+  display: flex;
+  gap: 10px;
+  
+  &.right {
+    justify-content: flex-end;
+  }
+  
+  &.center {
+    justify-content: center;
+  }
+}
+
+// 响应式
+@media (max-width: 768px) {
+  .page-container {
+    padding: 10px;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    
+    .el-button {
+      width: 100%;
+    }
+  }
+}

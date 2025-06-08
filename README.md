@@ -8,7 +8,7 @@
 
 ### 前端技术栈
 - **Vue2** - 前端框架
-- **Vite** - 构建工具和开发服务器
+- **Webpack** - 构建工具和开发服务器
 - **Element UI** - UI组件库
 - **Vue Router** - 路由管理
 - **Vuex** - 状态管理
@@ -26,7 +26,7 @@
 
 ```
 rag-project/
-├── frontend/                    # 前端项目（Vue2 + Vite）
+├── frontend/                    # 前端项目（Vue2 + Webpack）
 │   ├── public/
 │   │   └── index.html
 │   ├── src/
@@ -89,7 +89,8 @@ rag-project/
 │   │   ├── App.vue             # 根组件
 │   │   └── main.js             # 入口文件
 │   ├── package.json
-│   ├── vite.config.js          # Vite配置文件
+│   ├── webpack.config.js       # Webpack配置文件
+│   ├── .babelrc               # Babel配置文件
 │   └── .env                    # 环境变量
 ├── backend/                     # 后端项目
 │   ├── main.py                 # 主入口文件
@@ -334,33 +335,94 @@ POST   /api/{module}/batch           # 批量操作
 
 ## 开发环境配置
 
-### Vite配置（vite.config.js）
-```javascript
-import { defineConfig } from 'vite'
-import { createVuePlugin } from 'vite-plugin-vue2'
-import path from 'path'
+### 启动后端服务
 
-export default defineConfig({
-  plugins: [createVuePlugin()],
+在项目根目录下，使用以下命令启动后端服务：
+
+```bash
+python backend/start.py
+```
+
+启动后，服务将在以下地址可用：
+- API 文档：http://localhost:8000/docs
+- 健康检查：http://localhost:8000/health
+- 前端地址：http://localhost:3000（注意：这是前端的地址，不是后端启动的地址）
+
+### 启动前端服务
+
+在frontend目录下，使用以下命令启动前端开发服务器：
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Webpack配置（webpack.config.js）
+```javascript
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { VueLoaderPlugin } = require('vue-loader')
+
+module.exports = {
+  mode: 'development',
+  entry: './src/main.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
+    publicPath: '/'
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      'vue$': 'vue/dist/vue.esm.js'
     },
+    extensions: ['.js', '.vue', '.json']
   },
-  server: {
+  module: {
+    rules: [
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        type: 'asset/resource'
+      },
+      {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        type: 'asset/resource'
+      }
+    ]
+  },
+  plugins: [
+    new VueLoaderPlugin(),
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      filename: 'index.html'
+    })
+  ],
+  devServer: {
     port: 3000,
+    hot: true,
+    historyApiFallback: true,
     proxy: {
       '/api': {
         target: 'http://localhost:8000',
-        changeOrigin: true,
-      },
-    },
-  },
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-  },
-})
+        changeOrigin: true
+      }
+    }
+  }
+}
 ```
 
 ### 前端依赖包
@@ -374,9 +436,17 @@ export default defineConfig({
     "axios": "^1.4.0"
   },
   "devDependencies": {
-    "vite": "^4.4.0",
-    "@vitejs/plugin-vue2": "^2.2.0",
-    "sass": "^1.63.0"
+    "webpack": "^5.99.9",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "vue-loader": "^15.11.1",
+    "vue-template-compiler": "^2.7.14",
+    "babel-loader": "^9.1.3",
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "css-loader": "^6.8.1",
+    "style-loader": "^3.3.3",
+    "html-webpack-plugin": "^5.5.3"
   }
 }
 ```
@@ -437,7 +507,7 @@ graph TD
 ## 开发计划
 
 ### 第一阶段：基础框架搭建
-1. 前端Vue2 + Vite项目初始化
+1. 前端Vue2 + Webpack项目初始化
 2. 后端FastAPI项目初始化
 3. 基础布局组件开发
 4. 路由和状态管理配置
